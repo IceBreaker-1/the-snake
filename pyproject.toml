@@ -1,0 +1,3 @@
+# Для форматтера Black, чтобы не трогались одинарные кавычки при форматировании
+[tool.black]
+skip-string-normalization = true

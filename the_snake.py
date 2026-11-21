@@ -16,6 +16,9 @@ DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
 
+# Для возможности выбора случайного направления движения.
+DIRECTIONS = [UP, DOWN, LEFT, RIGHT]
+
 # Словари, для значительного сокращения функции handle_keys().
 # Клавиши управления.
 KEY_TO_DIRECTION: dict[int, tuple[int, int]] = {
@@ -76,7 +79,6 @@ class GameObject:
         )
         self.body_color: tuple[int, int, int] = body_color
 
-    # Убираем дубликат кода в наследуемых классах.
     def draw_cell(
             self,
             position: tuple[int, int],
@@ -86,7 +88,7 @@ class GameObject:
         """Рисует клетку заливкой fill_color и контуром border_color.
 
         Единая отрисовка для всех наследников: рисование и затирание
-        сегментов не дублируются
+        сегментов не дублируются.
         """
         rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(self.surface, fill_color, rect)
@@ -103,7 +105,7 @@ class GameObject:
 class Apple(GameObject):
     """Яблоко — цель змейки.
 
-    При создании занимает случайную **свободную** клетку поля; после поедания
+    При создании занимает случайную свободную клетку поля; после поедания
     перегенерируется на новой свободной клетке.
     """
 
@@ -156,7 +158,7 @@ class Snake(GameObject):
         """
         self.length: int = 1
         self.positions: list[tuple[int, int]] = [self.position]
-        self.direction: tuple[int, int] = choice([UP, DOWN, LEFT, RIGHT])
+        self.direction: tuple[int, int] = choice(DIRECTIONS)
         self.next_direction: tuple[int, int] | None = None
         self.last: tuple[int, int] | None = None
 
@@ -218,7 +220,7 @@ def handle_keys(snake: Snake) -> None:
                 snake.next_direction = new_direction
 
 
-def main():
+def main() -> None:
     """Основной игровой цикл.
 
     На каждой итерации: ограничение скорости, обработка ввода,
