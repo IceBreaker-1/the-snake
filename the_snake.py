@@ -50,14 +50,14 @@ class GameObject:
 
     def __init__(
             self,
-            body_color: tuple[int, int, int] | None = None,
+            body_color: tuple[int, int, int] = BOARD_BACKGROUND_COLOR,
             surface=screen
     ):
         self.surface = surface
         self.position: tuple[int, int] = (
             SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2
         )
-        self.body_color: tuple[int, int, int] | None = body_color
+        self.body_color: tuple[int, int, int] = body_color
 
     def draw(self) -> None:
         """
