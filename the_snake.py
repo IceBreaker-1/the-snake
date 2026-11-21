@@ -27,7 +27,7 @@ APPLE_COLOR = (255, 0, 0)
 SNAKE_COLOR = (0, 255, 0)
 
 # Скорость движения змейки:
-SPEED = 20
+SPEED = 8
 
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -102,25 +102,27 @@ class Snake(GameObject):
             (head_y + dir_y * GRID_SIZE) % SCREEN_HEIGHT
         )
         self.positions.insert(0, new_head)
-        self.last = self.positions[-1]
         if len(self.positions) > self.length:
-            self.positions.pop()
+            self.last = self.positions.pop()
 
     def draw(self):
-        for position in self.positions[1:]:
-            rect = (pygame.Rect(position, (GRID_SIZE, GRID_SIZE)))
-            pygame.draw.rect(screen, self.body_color, rect)
-            pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
-
-        # Отрисовка головы змейки
-        head_rect = pygame.Rect(self.positions[0], (GRID_SIZE, GRID_SIZE))
-        pygame.draw.rect(screen, self.body_color, head_rect)
-        pygame.draw.rect(screen, BORDER_COLOR, head_rect, 1)
-
-        # Затирание последнего сегмента
+        # Затирание клетки, с которой уполз хвост — ДО отрисовки змейки:
+        # в кольцевом движении новая голова встаёт на клетку last,
+        # и затирание после отрисовки стирало бы голову
         if self.last:
             last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
-            pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
+            pygame.draw.rect(self.surface, BOARD_BACKGROUND_COLOR, last_rect)
+
+        # Тело — все сегменты, кроме головы
+        for position in self.positions[1:]:
+            rect = (pygame.Rect(position, (GRID_SIZE, GRID_SIZE)))
+            pygame.draw.rect(self.surface, self.body_color, rect)
+            pygame.draw.rect(self.surface, BORDER_COLOR, rect, 1)
+
+        # Голова — первый элемент списка
+        head_rect = pygame.Rect(self.positions[0], (GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(self.surface, self.body_color, head_rect)
+        pygame.draw.rect(self.surface, BORDER_COLOR, head_rect, 1)
 
     def reset(self):
         self.__init__(body_color=self.body_color)
