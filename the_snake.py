@@ -29,7 +29,7 @@ APPLE_COLOR = (255, 0, 0)
 SNAKE_COLOR = (0, 255, 0)
 
 # Скорость движения змейки:
-SPEED = 8
+SPEED = 20
 
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -41,7 +41,6 @@ pygame.display.set_caption('Змейка')
 clock = pygame.time.Clock()
 
 
-# Тут опишите все классы игры.
 class GameObject:
     """Базовый класс игрового объекта.
 
@@ -51,14 +50,14 @@ class GameObject:
 
     def __init__(
             self,
-            body_color: tuple[int, int, int],
+            body_color: tuple[int, int, int] | None = None,
             surface=screen
     ):
         self.surface = surface
         self.position: tuple[int, int] = (
             SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2
         )
-        self.body_color: tuple[int, int, int] = body_color
+        self.body_color: tuple[int, int, int] | None = body_color
 
     def draw(self) -> None:
         """
