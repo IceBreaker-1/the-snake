@@ -99,7 +99,6 @@ class GameObject:
         Отрисовывает объект на поверхности.
         Переопределяется в наследниках.
         """
-        pass
 
 
 class Apple(GameObject):
@@ -111,10 +110,11 @@ class Apple(GameObject):
 
     def __init__(
             self,
-            body_color: tuple[int, int, int] = APPLE_COLOR
+            body_color: tuple[int, int, int] = APPLE_COLOR,
+            snake_positions=()
     ):
         super().__init__(body_color)
-        self.randomize_position()
+        self.randomize_position(snake_positions)
 
     def randomize_position(self, snake_positions=()) -> None:
         """Размещает яблоко на случайной клетке, не занятой змейкой.
@@ -201,7 +201,7 @@ class Snake(GameObject):
                            BOARD_BACKGROUND_COLOR)
         for position in self.positions[1:]:
             self.draw_cell(position, self.body_color)
-        self.draw_cell(self.positions[0], self.body_color)
+        self.draw_cell(self.get_head_position(), self.body_color)
 
 
 def handle_keys(snake: Snake) -> None:
@@ -214,7 +214,7 @@ def handle_keys(snake: Snake) -> None:
         if event.type == pygame.QUIT:
             pygame.quit()
             raise SystemExit
-        elif event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN:
             new_direction = KEY_TO_DIRECTION.get(event.key)
             if new_direction and new_direction != OPPOSITE[snake.direction]:
                 snake.next_direction = new_direction
@@ -232,8 +232,7 @@ def main() -> None:
 
     # Создаём игровые объекты.
     snake = Snake(SNAKE_COLOR)
-    apple = Apple(APPLE_COLOR)
-    apple.randomize_position(snake.positions)  # первое яблоко не в змейке
+    apple = Apple(APPLE_COLOR, snake.positions)
 
     while True:
         clock.tick(SPEED)
@@ -251,7 +250,7 @@ def main() -> None:
             apple.randomize_position(snake.positions)
 
         # Проверяем, не столкнулась ли змейка с собой.
-        if snake.get_head_position() in snake.positions[1:]:
+        elif snake.get_head_position() in snake.positions[1:]:
             snake.reset()
             screen.fill(BOARD_BACKGROUND_COLOR)
 
